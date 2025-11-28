@@ -12,12 +12,36 @@ class GameController extends Controller
      */
     public function index()
     {
-        $games = Game::all();
-
-        return response()->json([
-            'success' => true,
-            'data' => $games
-        ]);
+        $query = Game::query();
+        
+        if (request('category')) {
+            $query->where('genre', request('category'));
+        }
+        
+        if (request('q')) {
+            $query->where('title', 'like', '%' . request('q') . '%')
+                  ->orWhere('description', 'like', '%' . request('q') . '%');
+        }
+        
+        $games = $query->paginate(12);
+        
+        return view('games.index', compact('games'));
+    }
+    
+    /**
+     * Show the form for creating a new game.
+     */
+    public function create()
+    {
+        return view('games.create');
+    }
+    
+    /**
+     * Search games.
+     */
+    public function search(Request $request)
+    {
+        return $this->index();
     }
 
     /**
@@ -41,11 +65,8 @@ class GameController extends Controller
 
         $game = Game::create($validated);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Game created successfully.',
-            'data' => $game
-        ], 201);
+        return redirect()->route('games.show', $game->id)
+            ->with('success', 'Game created successfully.');
     }
 
     /**
@@ -53,10 +74,15 @@ class GameController extends Controller
      */
     public function show(Game $game)
     {
-        return response()->json([
-            'success' => true,
-            'data' => $game
-        ]);
+        return view('games.show', compact('game'));
+    }
+    
+    /**
+     * Show the form for editing the specified game.
+     */
+    public function edit(Game $game)
+    {
+        return view('games.edit', compact('game'));
     }
 
     /**
@@ -80,11 +106,8 @@ class GameController extends Controller
 
         $game->update($validated);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Game updated successfully.',
-            'data' => $game
-        ]);
+        return redirect()->route('games.show', $game->id)
+            ->with('success', 'Game updated successfully.');
     }
 
     /**
@@ -94,9 +117,7 @@ class GameController extends Controller
     {
         $game->delete();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Game deleted successfully.'
-        ]);
+        return redirect()->route('games.index')
+            ->with('success', 'Game deleted successfully.');
     }
 }

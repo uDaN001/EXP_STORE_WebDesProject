@@ -15,13 +15,25 @@ class OrderController extends Controller
      */
     public function index()
     {
-        // Get all orders with relationships
-        $orders = Order::with(['customer', 'orderItems.game', 'payment'])->get();
-
-        return response()->json([
-            'success' => true,
-            'data' => $orders
-        ]);
+        $query = Order::with(['customer', 'orderItems.game', 'payment']);
+        
+        // If customer is logged in, show only their orders
+        if (session('customer_id')) {
+            $query->where('customer_id', session('customer_id'));
+        }
+        
+        $orders = $query->orderBy('created_at', 'desc')->paginate(15);
+        
+        return view('orders.index', compact('orders'));
+    }
+    
+    /**
+     * Show the form for editing the specified order.
+     */
+    public function edit($id)
+    {
+        $order = Order::with(['customer', 'orderItems.game', 'payment'])->findOrFail($id);
+        return view('orders.edit', compact('order'));
     }
 
     /**
@@ -29,47 +41,54 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
+        // Handle cart-based order creation
+        $cart = session('cart', []);
+        
+        if (empty($cart)) {
+            return redirect()->route('cart.index')
+                ->with('error', 'Your cart is empty.');
+        }
+        
         $validator = Validator::make($request->all(), [
-            'customer_id' => 'required|exists:customers,id',
             'total_amount' => 'required|numeric|min:0',
-            'payment_method' => 'required|string|max:50',
-            'status' => 'required|in:pending,completed,cancelled',
-            'items' => 'required|array|min:1',
-            'items.*.game_id' => 'required|exists:games,id',
-            'items.*.quantity' => 'required|integer|min:1',
-            'items.*.price' => 'required|numeric|min:0',
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'errors' => $validator->errors(),
-            ], 422);
+            return redirect()->route('cart.index')
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        // Get customer ID from session
+        $customerId = session('customer_id');
+        if (!$customerId) {
+            return redirect()->route('customers.login')
+                ->with('error', 'Please login to place an order.');
         }
 
         // Create Order
         $order = Order::create([
-            'customer_id' => $request->customer_id,
+            'customer_id' => $customerId,
             'total_amount' => $request->total_amount,
-            'payment_method' => $request->payment_method,
-            'status' => $request->status,
+            'payment_method' => 'Online',
+            'status' => 'pending',
         ]);
 
-        // Create Order Items
-        foreach ($request->items as $item) {
+        // Create Order Items from cart
+        foreach ($cart as $item) {
             OrderItem::create([
                 'order_id' => $order->id,
                 'game_id' => $item['game_id'],
                 'quantity' => $item['quantity'],
-                'price' => $item['price'],
+                'price_each' => $item['price'],
             ]);
         }
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Order created successfully.',
-            'data' => $order->load(['orderItems', 'customer']),
-        ], 201);
+        // Clear cart
+        session(['cart' => []]);
+
+        return redirect()->route('orders.show', $order->id)
+            ->with('success', 'Order placed successfully!');
     }
 
     /**
@@ -77,19 +96,14 @@ class OrderController extends Controller
      */
     public function show($id)
     {
-        $order = Order::with(['customer', 'orderItems.game', 'payment'])->find($id);
-
-        if (!$order) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Order not found.',
-            ], 404);
+        $order = Order::with(['customer', 'orderItems.game', 'payment'])->findOrFail($id);
+        
+        // Check if customer owns this order (if logged in as customer)
+        if (session('customer_id') && $order->customer_id != session('customer_id')) {
+            abort(403, 'Unauthorized access.');
         }
-
-        return response()->json([
-            'success' => true,
-            'data' => $order,
-        ]);
+        
+        return view('orders.show', compact('order'));
     }
 
     /**
@@ -97,35 +111,24 @@ class OrderController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $order = Order::find($id);
-
-        if (!$order) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Order not found.',
-            ], 404);
-        }
+        $order = Order::findOrFail($id);
 
         $validator = Validator::make($request->all(), [
             'total_amount' => 'sometimes|numeric|min:0',
             'payment_method' => 'sometimes|string|max:50',
-            'status' => 'sometimes|in:pending,completed,cancelled',
+            'status' => 'sometimes|in:pending,paid,shipped,completed,cancelled',
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'errors' => $validator->errors(),
-            ], 422);
+            return redirect()->route('orders.edit', $order->id)
+                ->withErrors($validator)
+                ->withInput();
         }
 
         $order->update($request->only(['total_amount', 'payment_method', 'status']));
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Order updated successfully.',
-            'data' => $order->load(['orderItems', 'customer', 'payment']),
-        ]);
+        return redirect()->route('orders.show', $order->id)
+            ->with('success', 'Order updated successfully.');
     }
 
     /**
@@ -144,9 +147,7 @@ class OrderController extends Controller
 
         $order->delete();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Order deleted successfully.',
-        ]);
+        return redirect()->route('orders.index')
+            ->with('success', 'Order deleted successfully.');
     }
 }
