@@ -31,6 +31,7 @@ class Game extends Model
         'price' => 'decimal:2',
     ];
 
+
     /**
      * Get the sale price if on sale
      */

@@ -14,14 +14,20 @@ class HomeController extends Controller
             ->orderBy('created_at', 'desc')
             ->take(5)
             ->get();
-        
+
         // Get games on sale
         $saleGames = Game::where('is_on_sale', true)
             ->whereNotNull('sale_percentage')
             ->orderBy('sale_percentage', 'desc')
-            ->take(5)
+            ->take(6)
             ->get();
-        
+
+        // Get featured games (top rated)
+        $featuredGames = Game::orderBy('rating', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->take(6)
+            ->get();
+
         // Get unique categories from games
         $categories = Game::whereNotNull('genre')
             ->distinct()
@@ -30,8 +36,7 @@ class HomeController extends Controller
             ->unique()
             ->values()
             ->toArray();
-        
-        return view('home', compact('popularGames', 'saleGames', 'categories'));
+
+        return view('home', compact('popularGames', 'saleGames', 'categories', 'featuredGames'));
     }
 }
-

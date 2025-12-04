@@ -45,6 +45,7 @@ Route::delete('/customers/{customer}', [CustomerController::class, 'destroy'])->
 // Orders
 Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
 Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
+Route::get('/orders/complete/{order}', [OrderController::class, 'complete'])->name('orders.complete');
 Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
 Route::get('/orders/{order}/edit', [OrderController::class, 'edit'])->name('orders.edit');
 Route::put('/orders/{order}', [OrderController::class, 'update'])->name('orders.update');
@@ -57,7 +58,8 @@ Route::post('/admin/login', [AdminController::class, 'authenticate'])->name('adm
 Route::middleware(['admin'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/logout', [AdminController::class, 'logout'])->name('admin.logout');
-    
+    Route::get('/manage', [AdminController::class, 'manage'])->name('admin.manage');
+
     // Game Management
     Route::get('/games', [AdminController::class, 'games'])->name('admin.games');
     Route::get('/games/create', [AdminController::class, 'createGame'])->name('admin.games.create');
@@ -65,4 +67,10 @@ Route::middleware(['admin'])->prefix('admin')->group(function () {
     Route::get('/games/{game}/edit', [AdminController::class, 'editGame'])->name('admin.games.edit');
     Route::put('/games/{game}', [AdminController::class, 'updateGame'])->name('admin.games.update');
     Route::delete('/games/{game}', [AdminController::class, 'deleteGame'])->name('admin.games.delete');
+
+    // Admin manage users
+    Route::get('/manage', [AdminController::class, 'manage'])->name('admin.manage');
+    Route::get('/users/{id}/edit', [AdminController::class, 'editUser'])->name('admin.users.edit');
+    Route::put('/users/{id}', [AdminController::class, 'updateUser'])->name('admin.users.update');
+    Route::delete('/users/{id}', [AdminController::class, 'deleteUser'])->name('admin.users.delete');
 });

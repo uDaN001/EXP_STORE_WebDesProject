@@ -24,7 +24,20 @@ class AdminController extends Controller
 
         $credentials = $request->only('email', 'password');
 
-        if (Auth::attempt($credentials)) {
+        // Check if user exists first
+        $user = User::where('email', $credentials['email'])->first();
+        if (!$user) {
+            return back()->with('error', 'Invalid credentials.')->withInput();
+        }
+
+        // Check if user is admin
+        if (!$user->is_admin) {
+            return back()->with('error', 'You do not have permission to access admin area.')->withInput();
+        }
+
+        // Compare plain text password
+        if ($user->password === $credentials['password']) {
+            Auth::login($user);
             $request->session()->regenerate();
             return redirect()->route('admin.dashboard')->with('success', 'Welcome, Admin!');
         }
@@ -46,8 +59,52 @@ class AdminController extends Controller
         $totalOrders = \App\Models\Order::count();
         $totalCustomers = \App\Models\Customer::count();
         $gamesOnSale = Game::where('is_on_sale', true)->count();
-        
+
         return view('admin.dashboard', compact('totalGames', 'totalOrders', 'totalCustomers', 'gamesOnSale'));
+    }
+
+    /**
+     * Manage page - show users, orders and games for admin to manage.
+     */
+    public function manage()
+    {
+        $users = \App\Models\User::orderBy('created_at', 'desc')->paginate(15);
+        $orders = \App\Models\Order::with('customer')->orderBy('created_at', 'desc')->paginate(15);
+        $games = Game::orderBy('created_at', 'desc')->paginate(15);
+
+        return view('admin.manage', compact('users', 'orders', 'games'));
+    }
+
+    public function editUser($id)
+    {
+        $user = \App\Models\User::findOrFail($id);
+        return view('admin.users.edit', compact('user'));
+    }
+
+    public function updateUser(Request $request, $id)
+    {
+        $user = \App\Models\User::findOrFail($id);
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'is_admin' => 'sometimes|boolean',
+        ]);
+
+        $user->update([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'is_admin' => $request->has('is_admin') ? 1 : 0,
+        ]);
+
+        return redirect()->route('admin.manage')->with('success', 'User updated.');
+    }
+
+    public function deleteUser($id)
+    {
+        $user = \App\Models\User::findOrFail($id);
+        $user->delete();
+        return redirect()->route('admin.manage')->with('success', 'User deleted.');
     }
 
     public function games()
@@ -124,4 +181,3 @@ class AdminController extends Controller
         return redirect()->route('admin.games')->with('success', 'Game deleted successfully.');
     }
 }
-

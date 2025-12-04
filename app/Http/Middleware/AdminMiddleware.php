@@ -20,7 +20,12 @@ class AdminMiddleware
             return redirect()->route('admin.login')->with('error', 'Please login to access admin area.');
         }
 
+        // Only allow users with is_admin = true
+        $user = Auth::user();
+        if (!$user || !$user->is_admin) {
+            return redirect()->route('admin.login')->with('error', 'You do not have permission to access admin area.');
+        }
+
         return $next($request);
     }
 }
-

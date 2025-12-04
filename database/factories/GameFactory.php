@@ -29,7 +29,7 @@ class GameFactory extends Factory
             'publisher' => $this->faker->optional()->randomElement($publishers),
             'release_date' => $this->faker->optional()->date(),
             'price' => $this->faker->optional()->randomFloat(2, 5, 80),
-            'stock' => $this->faker->numberBetween(0, 500),
+            'stock' => 999,
             'description' => $this->faker->optional()->paragraphs(2, true),
             'image_url' => $this->faker->optional()->imageUrl(640, 480, 'games', true),
             'rating' => $this->faker->randomFloat(1, 0, 10),

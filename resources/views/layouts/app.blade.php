@@ -1,16 +1,20 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title', 'EXP GAME STORE')</title>
-    
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet" />
-    
-    <!-- Styles are included inline below -->
-    
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Base Styles -->
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+
+    <!-- Page-specific styles -->
+    @stack('styles')
+
     <style>
         :root {
             --primary-red: #8B0000;
@@ -18,173 +22,26 @@
             --darker-red: #3D0000;
             --light-red: #A52A2A;
         }
-        
-        body {
-            font-family: 'Instrument Sans', sans-serif;
-            background: linear-gradient(to bottom, var(--primary-red), var(--darker-red));
-            min-height: 100vh;
-            color: white;
-            margin: 0;
-            padding: 0;
-        }
-        
-        .header {
-            background-color: #000;
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
-        }
-        
-        .logo {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: white;
-            text-decoration: none;
-            letter-spacing: 2px;
-        }
-        
-        .logo .exp {
-            font-size: 2.2rem;
-        }
-        
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-        }
-        
-        .cart-icon {
-            color: white;
-            font-size: 1.5rem;
-            text-decoration: none;
-            position: relative;
-        }
-        
-        .cart-count {
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            background: var(--primary-red);
-            color: white;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
-            font-weight: bold;
-        }
-        
-        .search-bar {
-            display: flex;
-            align-items: center;
-            background: #333;
-            border-radius: 25px;
-            padding: 0.5rem 1rem;
-            width: 300px;
-        }
-        
-        .search-bar input {
-            background: transparent;
-            border: none;
-            color: white;
-            outline: none;
-            flex: 1;
-            padding: 0.25rem;
-        }
-        
-        .search-bar input::placeholder {
-            color: #999;
-        }
-        
-        .search-icon {
-            color: #999;
-            cursor: pointer;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-        
-        .section-title {
-            font-size: 2rem;
-            font-weight: 700;
-            margin: 2rem 0 1rem 0;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-        
-        .games-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 1.5rem;
-            margin: 2rem 0;
-        }
-        
-        .game-card {
-            background: var(--light-red);
-            border-radius: 10px;
-            overflow: hidden;
-            transition: transform 0.3s, box-shadow 0.3s;
-            cursor: pointer;
-        }
-        
-        .game-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-        }
-        
-        .game-card img {
-            width: 100%;
-            height: 250px;
-            object-fit: cover;
-        }
-        
-        .game-card-info {
+
+        /* Additional styles for pages that don't use storefront.css */
+        .alert {
             padding: 1rem;
-        }
-        
-        .game-card-title {
-            font-weight: 600;
-            font-size: 1rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .game-card-price {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: white;
-        }
-        
-        .category-buttons {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-            margin: 1rem 0;
-        }
-        
-        .category-btn {
-            background: var(--light-red);
-            color: white;
-            border: none;
-            padding: 0.75rem 1.5rem;
             border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.3s;
+            margin-bottom: 1rem;
         }
-        
-        .category-btn:hover {
-            background: var(--primary-red);
+
+        .alert-success {
+            background: rgba(0, 255, 0, 0.2);
+            border: 1px solid rgba(0, 255, 0, 0.5);
         }
-        
+
+        .alert-error {
+            background: rgba(255, 0, 0, 0.2);
+            border: 1px solid rgba(255, 0, 0, 0.5);
+        }
+
         .btn {
-            padding: 0.75rem 1.5rem;
+            padding: 10px 20px;
             border-radius: 8px;
             border: none;
             font-weight: 600;
@@ -192,122 +49,136 @@
             text-decoration: none;
             display: inline-block;
             transition: all 0.3s;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 16px;
         }
-        
+
         .btn-primary {
-            background: white;
-            color: var(--primary-red);
-            border: 2px solid var(--primary-red);
+            background: #DB0000;
+            color: white;
+            border: none;
         }
-        
+
         .btn-primary:hover {
-            background: var(--primary-red);
+            background: #8E0007;
             color: white;
         }
-        
+
         .btn-danger {
-            background: var(--primary-red);
+            background: #DB0000;
             color: white;
         }
-        
+
         .btn-danger:hover {
-            background: var(--dark-red);
+            background: #8E0007;
         }
-        
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-        }
-        
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 0.75rem;
-            border-radius: 8px;
-            border: 2px solid #333;
-            background: #333;
+
+        .btn-grey {
+            background: #666;
             color: white;
-            font-size: 1rem;
         }
-        
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: var(--primary-red);
+
+        .btn-grey:hover {
+            background: #777;
         }
-        
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-            background: rgba(0,0,0,0.3);
-            border-radius: 10px;
-            overflow: hidden;
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 80px;
         }
-        
-        .table th,
-        .table td {
-            padding: 1rem;
-            text-align: left;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: 48px;
+            color: white;
+            margin-bottom: 30px;
         }
-        
-        .table th {
-            background: var(--dark-red);
-            font-weight: 600;
+
+        /* header icons */
+        .header-icons {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
         }
-        
-        .table tr:hover {
-            background: rgba(255,255,255,0.05);
+
+        .cart-icon {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            color: white;
         }
-        
-        .alert {
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
+
+        .cart-icon svg {
+            width: 24px;
+            height: 24px;
+            fill: white;
         }
-        
-        .alert-success {
-            background: rgba(0,255,0,0.2);
-            border: 1px solid rgba(0,255,0,0.5);
+
+        .cart-count {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: #ff6b6b;
+            color: white;
+            border-radius: 50%;
+            padding: 3px 6px;
+            font-size: 12px;
+            font-weight: 700;
         }
-        
-        .alert-error {
-            background: rgba(255,0,0,0.2);
-            border: 1px solid rgba(255,0,0,0.5);
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+        }
+
+        .search-bar input {
+            padding: 6px 10px;
+            border-radius: 6px 0 0 6px;
+            border: 1px solid #333;
+        }
+
+        .search-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 0 6px 6px 0;
+            border: 1px solid #333;
+            background: #222;
         }
     </style>
 </head>
+
 <body>
     <header class="header">
-        <a href="{{ route('home') }}" class="logo">
-            <span class="exp">EXP</span> GAME STORE
+        <a href="{{ route('home') }}" class="logo" style="text-decoration: none;">
+            <span class="logo-letter">E</span><span class="logo-x">X</span><span class="logo-letter">P</span>
+            <span class="store-text"> GAME STORE</span>
         </a>
-        <div class="header-right">
-            <a href="{{ route('cart.index') }}" class="cart-icon">
-                🛒
+        <div class="header-icons">
+            <a href="{{ route('cart.index') }}" class="cart-icon" style="text-decoration: none;">
+                <!-- simple cart icon (SVG) -->
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path
+                        d="M7 4h-2l-1 2h2l3.6 7.59-1.35 2.45c-.16.29-.25.62-.25.96 0 1.11.89 2 2 2h9v-2h-9l1.1-2h6.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49-1.74-1-3.58 6.49h-7.11l-.94-2h8.05v-2h-9.72l-.66-1.33L7 4z">
+                    </path>
+                </svg>
                 @if(session('cart') && count(session('cart')) > 0)
                     <span class="cart-count">{{ count(session('cart')) }}</span>
                 @endif
             </a>
             <form action="{{ route('games.search') }}" method="GET" class="search-bar">
-                <input type="text" name="q" placeholder="Search games..." value="{{ request('q') }}">
-                <span class="search-icon">🔍</span>
+                <input type="text" name="q" placeholder="Search..." value="{{ request('q') }}">
+                <button type="submit" class="search-btn"></button>
             </form>
             @if(session('customer_id'))
                 <a href="{{ route('orders.index') }}" class="btn btn-primary" style="text-decoration: none;">My Orders</a>
                 <a href="{{ route('customers.logout') }}" class="btn btn-danger" style="text-decoration: none;">Logout</a>
             @else
                 <a href="{{ route('customers.login') }}" class="btn btn-primary" style="text-decoration: none;">Login</a>
-            @endif
-            @if(!auth()->check())
-                <a href="{{ route('admin.login') }}" class="btn" style="background: #666; text-decoration: none;">Admin</a>
             @endif
         </div>
     </header>
@@ -344,5 +215,5 @@
         @yield('content')
     </main>
 </body>
-</html>
 
+</html>

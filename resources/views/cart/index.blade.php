@@ -1,11 +1,16 @@
 @extends('layouts.app')
 
-@section('title', 'Shopping Cart - EXP GAME STORE')
+@section('title', 'EXP Game Store - Purchase')
+
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/storefront.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/purchase.css') }}">
+@endpush
 
 @section('content')
-<div class="container">
-    <h1 class="section-title">Shopping Cart</h1>
-    
+<section class="purchase-page">
+    <h2 class="section-title">YOUR CART</h2>
+
     @if(session('cart') && count(session('cart')) > 0)
         @php
             $cart = session('cart');
@@ -20,66 +25,92 @@
             @endphp
             
             @if($game)
-                <div style="background: var(--light-red); padding: 1.5rem; border-radius: 10px; margin-bottom: 1rem; display: flex; gap: 1.5rem; align-items: center;">
-                    <div style="flex-shrink: 0;">
-                        @if($game->image_url)
-                            <img src="{{ $game->image_url }}" alt="{{ $game->title }}" style="width: 150px; height: 200px; object-fit: cover; border-radius: 8px;">
-                        @else
-                            <img src="https://via.placeholder.com/150x200?text={{ urlencode($game->title) }}" alt="{{ $game->title }}" style="width: 150px; height: 200px; object-fit: cover; border-radius: 8px;">
-                        @endif
-                    </div>
-                    
-                    <div style="flex: 1;">
-                        <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">{{ $game->title }}</h2>
-                        <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
-                            @if($game->platform)
-                                @foreach(explode(',', $game->platform) as $platform)
-                                    <span style="background: rgba(255,255,255,0.2); padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.875rem;">{{ trim($platform) }}</span>
-                                @endforeach
-                            @endif
+                <!-- Cart Item Panel -->
+                <div class="cart-item">
+                    <div class="cart-item-panel">
+                        <!-- Game Poster -->
+                        <img src="{{ $game->poster_url ?: ($game->image_url ?: asset('css/assets/game1.jpg')) }}" 
+                             alt="{{ $game->title }}" class="game-poster">
+
+                        <!-- Game Details -->
+                        <div class="game-details">
+                            <div class="title-row">
+                                <h3 class="game-title">{{ $game->title }}</h3>
+
+                                <div class="platform-icons">
+                                    @if($game->platform)
+                                        @php
+                                            $platforms = explode(',', $game->platform);
+                                        @endphp
+                                        @foreach($platforms as $platform)
+                                            @if(stripos(trim($platform), 'windows') !== false || stripos(trim($platform), 'Windows') !== false)
+                                                <img src="{{ asset('css/assets/windows.png') }}" alt="Windows" class="platform">
+                                            @endif
+                                            @if(stripos(trim($platform), 'mac') !== false || stripos(trim($platform), 'apple') !== false || stripos(trim($platform), 'Apple') !== false || stripos(trim($platform), 'macOS') !== false)
+                                                <img src="{{ asset('css/assets/apple.png') }}" alt="Apple" class="platform">
+                                            @endif
+                                        @endforeach
+                                    @else
+                                        <!-- Default platforms if none specified -->
+                                        <img src="{{ asset('css/assets/windows.png') }}" alt="Windows" class="platform">
+                                        <img src="{{ asset('css/assets/apple.png') }}" alt="Apple" class="platform">
+                                    @endif
+                                </div>
+                            </div>
                         </div>
-                        <div style="display: flex; gap: 1rem; align-items: center;">
-                            <a href="{{ route('cart.add', $game->id) }}" style="color: white; text-decoration: underline;">Add</a>
-                            <span>|</span>
-                            <a href="{{ route('cart.remove', $game->id) }}" style="color: white; text-decoration: underline;">Remove</a>
+                        
+                        <!-- Price and Remove Button -->
+                        <div class="price-controls">
+                            <p class="price">₱{{ number_format($item['price'], 0) }}</p>
+                            
+                            <div class="remove-controls">
+                                <a href="{{ route('cart.remove', $game->id) }}" style="text-decoration: none; color: white;">
+                                    <button class="remove" type="button">Remove</button>
+                                </a>
+                            </div>
                         </div>
-                    </div>
-                    
-                    <div style="text-align: right;">
-                        <div style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">₱ {{ number_format($item['price'], 2) }}</div>
-                        <div style="color: #ccc;">Quantity: {{ $item['quantity'] }}</div>
                     </div>
                 </div>
             @endif
         @endforeach
-        
-        <div style="margin-top: 2rem; padding: 1.5rem; background: rgba(0,0,0,0.3); border-radius: 10px;">
-            <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid rgba(255,255,255,0.2);">
+
+        @php
+            $vat = $subtotal * 0.10; // 10% VAT
+            $total = $subtotal + $vat;
+        @endphp
+
+        <!-- Subtotal & Total -->
+        <div class="totals">
+            <div class="subtotal-row">
                 <span>Subtotal:</span>
-                <span>₱ {{ number_format($subtotal, 2) }}</span>
+                <span>₱{{ number_format($subtotal, 0) }}</span>
             </div>
-            <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; font-size: 1.2rem; font-weight: 700;">
-                <span>Total:</span>
-                <span>₱ {{ number_format($subtotal, 2) }}</span>
+
+            <div class="totals-divider"></div>
+
+            <div class="total-row">
+                <span>Total (incl. VAT):</span>
+                <span>₱{{ number_format($total, 0) }}</span>
             </div>
-            <p style="margin-top: 1rem; font-size: 0.875rem; color: #ccc;">All prices include VAT where applicable</p>
-            
-            @if(session('customer_id'))
-                <form action="{{ route('orders.store') }}" method="POST" style="margin-top: 1.5rem;">
-                    @csrf
-                    <input type="hidden" name="total_amount" value="{{ $subtotal }}">
-                    <button type="submit" class="btn btn-primary" style="width: 100%; font-size: 1.1rem; padding: 1rem;">Purchase</button>
-                </form>
-            @else
-                <a href="{{ route('customers.login') }}" class="btn btn-primary" style="width: 100%; font-size: 1.1rem; padding: 1rem; text-align: center; display: block; text-decoration: none;">Login to Purchase</a>
-            @endif
+            <!-- VAT note under the total, left aligned -->
+            <div class="vat-note">All prices include VAT where applicable</div>
         </div>
+
+        <!-- Purchase Button -->
+        @if(session('customer_id'))
+            <form action="{{ route('orders.store') }}" method="POST" style="display: inline;">
+                @csrf
+                <input type="hidden" name="total_amount" value="{{ $total }}">
+                <button type="submit" class="purchase-btn">Purchase</button>
+            </form>
+        @else
+            <a href="{{ route('customers.login') }}" class="purchase-btn">Login to Purchase</a>
+        @endif
     @else
-        <div style="text-align: center; padding: 3rem;">
+        <div style="text-align: center; padding: 3rem; color: white; font-family: 'Orbitron', sans-serif;">
             <p style="font-size: 1.5rem;">Your cart is empty.</p>
-            <a href="{{ route('home') }}" class="btn btn-primary" style="margin-top: 1rem; text-decoration: none;">Continue Shopping</a>
+            <a href="{{ route('home') }}" class="purchase-btn" style="margin-top: 1rem;">Continue Shopping</a>
         </div>
     @endif
-</div>
+</section>
 @endsection
-
