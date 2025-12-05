@@ -18,7 +18,7 @@
             <div style="font-family: 'Orbitron', sans-serif; font-size: 24px; color: white; margin-bottom: 40px;">
                 <p>Thank you for your purchase!</p>
                 <p style="margin-top: 20px;">Order #{{ $order->id }}</p>
-                <p style="margin-top: 10px;">Total: ₱{{ number_format($order->total_amount, 2) }}</p>
+                <p style="margin-top: 10px;">Total: ${{ number_format($order->total_amount, 2) }}</p>
             </div>
 
             <div style="margin-top: 40px;">

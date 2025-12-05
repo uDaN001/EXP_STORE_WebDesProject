@@ -6,11 +6,13 @@
 <div class="container">
     <div style="display: flex; gap: 2rem; margin-bottom: 2rem;">
         <div style="flex-shrink: 0;">
-            @if($game->image_url)
-                <img src="{{ $game->image_url }}" alt="{{ $game->title }}" style="width: 300px; height: 400px; object-fit: cover; border-radius: 10px;">
-            @else
-                <img src="https://via.placeholder.com/300x400?text={{ urlencode($game->title) }}" alt="{{ $game->title }}" style="width: 300px; height: 400px; object-fit: cover; border-radius: 10px;">
-            @endif
+            @php
+                $consoleIcon = asset('css/assets/console_icon.jpg');
+                $gameImage = !empty($game->image_url) ? $game->image_url : $consoleIcon;
+            @endphp
+            <img src="{{ $gameImage }}" alt="{{ $game->title }}" 
+                style="width: 300px; height: 400px; object-fit: cover; border-radius: 10px;"
+                onerror="this.onerror=null; this.src='{{ $consoleIcon }}';">
         </div>
         
         <div style="flex: 1;">
@@ -26,11 +28,11 @@
             
             <div style="margin: 1.5rem 0;">
                 @if($game->is_on_sale && $game->sale_percentage)
-                    <div style="text-decoration: line-through; color: #999; font-size: 1.2rem;">₱ {{ number_format($game->price, 2) }}</div>
-                    <div style="font-size: 2rem; font-weight: 700; color: #ff6b6b;">₱ {{ number_format($game->sale_price, 2) }}</div>
+                    <div style="text-decoration: line-through; color: #999; font-size: 1.2rem;">$ {{ number_format($game->price, 2) }}</div>
+                    <div style="font-size: 2rem; font-weight: 700; color: #ff6b6b;">$ {{ number_format($game->sale_price, 2) }}</div>
                     <div style="color: #ff6b6b; font-size: 1rem; font-weight: 600; margin-top: 0.5rem;">{{ $game->sale_percentage }}% OFF</div>
                 @else
-                    <div style="font-size: 2rem; font-weight: 700;">₱ {{ number_format($game->price, 2) }}</div>
+                    <div style="font-size: 2rem; font-weight: 700;">$ {{ number_format($game->price, 2) }}</div>
                 @endif
             </div>
             

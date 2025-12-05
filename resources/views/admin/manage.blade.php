@@ -58,7 +58,7 @@
                         <tr>
                             <td>{{ $order->id }}</td>
                             <td>{{ $order->customer->full_name ?? $order->customer->username ?? 'N/A' }}</td>
-                            <td>₱{{ number_format($order->total_amount, 2) }}</td>
+                            <td>${{ number_format($order->total_amount, 2) }}</td>
                             <td>{{ ucfirst($order->status) }}</td>
                             <td>
                                 <button class="btn btn-primary" onclick="toggleEditOrder({{ $order->id }})">Edit</button>
@@ -137,7 +137,7 @@
                             <td>{{ $game->id }}</td>
                             <td>{{ $game->title }}</td>
                             <td>{{ $game->genre }}</td>
-                            <td>₱{{ number_format($game->price, 2) }}</td>
+                            <td>${{ number_format($game->price, 2) }}</td>
                             <td>
                                 <button class="btn btn-primary" onclick="toggleEditGame({{ $game->id }})">Edit</button>
                                 <form action="{{ route('admin.games.delete', $game->id) }}" method="POST"

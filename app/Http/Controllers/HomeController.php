@@ -9,23 +9,43 @@ class HomeController extends Controller
 {
     public function index()
     {
-        // Get popular games (you can customize this logic)
-        $popularGames = Game::orderBy('rating', 'desc')
-            ->orderBy('created_at', 'desc')
-            ->take(5)
-            ->get();
+        // Get popular games - games 6, 7, 8, 9, 10
+        $popularGameTitles = [
+            'Clair Obscur: Expedition 33',
+            'R.E.P.O.',
+            'Peak',
+            'The Elder Scrolls V: Skyrim',
+            'BioShock'
+        ];
+        $popularGames = collect();
+        foreach ($popularGameTitles as $title) {
+            $game = Game::where('title', $title)->first();
+            if ($game) {
+                $popularGames->push($game);
+            }
+        }
 
-        // Get games on sale
-        $saleGames = Game::where('is_on_sale', true)
-            ->whereNotNull('sale_percentage')
-            ->orderBy('sale_percentage', 'desc')
-            ->take(6)
-            ->get();
+        // Get games on sale - games 1, 2, 3, 4, 5, 6
+        $saleGameTitles = [
+            'Elden Ring',
+            'Cyberpunk 2077',
+            'Hollow Knight: Silksong',
+            'Baldur\'s Gate 3',
+            'Silent Hill f',
+            'Clair Obscur: Expedition 33'
+        ];
+        $saleGames = collect();
+        foreach ($saleGameTitles as $title) {
+            $game = Game::where('title', $title)->first();
+            if ($game) {
+                $saleGames->push($game);
+            }
+        }
 
-        // Get featured games (top rated)
+        // Get featured games (top rated) - get more to ensure we have enough
         $featuredGames = Game::orderBy('rating', 'desc')
             ->orderBy('created_at', 'desc')
-            ->take(6)
+            ->take(10)
             ->get();
 
         // Get unique categories from games

@@ -47,7 +47,7 @@
 
         <!-- RIGHT: SIGNUP -->
         <div class="signup-section">
-            <h2 class="section-title">JOIN THE EXP FAMILY</h2>
+            <h2 class="section-title">JOIN THE <span class="logo-letter">E</span><span class="logo-x">X</span><span class="logo-letter">P</span> FAMILY</h2>
             <p class="subtitle">Leading games retailer in the Philippines!</p>
 
             @if(isset($errors) && $errors->any())

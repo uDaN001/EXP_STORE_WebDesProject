@@ -16,6 +16,14 @@ body {
     font-family: var(--font-sans);
     color: var(--white);
     background: linear-gradient(90deg, #000000 0%, #000000 31.73%, #8E0007 100%);
+    overflow-x: hidden;
+    max-width: 100vw;
+    box-sizing: border-box;
+}
+
+html {
+    overflow-x: hidden;
+    max-width: 100vw;
 }
 
 .red {
@@ -148,61 +156,65 @@ body {
     width: 100%;
     overflow: hidden;     
     box-sizing: border-box;
-    padding: 0 20px;
-    gap: 20px;
+    padding: 15px;
+    gap: 15px;
+    max-height: calc(100vh - 115px);
 }
 
 /* ==== LOGIN PANEL (LEFT) ==== */
 .login-section {
     flex: 3;
-    padding: 60px 80px;
+    padding: 25px 40px;
     background: transparent;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    justify-content: flex-start;
+    overflow-y: auto;
 }
 
 .login-section .section-title {
-    font-size: 96px;
+    font-size: 42px;
     font-weight: 700;
-    margin-bottom: 60px;
+    margin-bottom: 25px;
     color: white;
 }
 
 .login-section label {
-    font-size: 25px;
+    font-size: 14px;
     font-weight: 700;
-    margin-bottom: 20px;
+    margin-bottom: 8px;
     display: block;
     color: white;
 }
 
 .login-section .input-box {
     width: 100%;
-    max-width: 885px;
-    height: 60px;
-    border-radius: 15px;
-    font-size: 24px;
-    padding: 0 20px;
+    max-width: 500px;
+    height: 40px;
+    border-radius: 10px;
+    font-size: 14px;
+    padding: 0 12px;
     border: none;
     background: var(--muted-input);
-    margin-bottom: 40px;
+    margin-bottom: 20px;
     font-family: 'Orbitron', sans-serif;
 }
 
 .login-btn {
-    width: 300px;
-    height: 74px;
-    font-size: 40px;
+    width: 180px;
+    height: 45px;
+    font-size: 20px;
     font-family: 'Orbitron', sans-serif;
     font-weight: 700;
-    border-radius: 15px;
+    border-radius: 10px;
     background: white;
     color: #DB0000;
     border: none;
     cursor: pointer;
-    align-self: flex-end; 
+    align-self: flex-start; 
     transition: all 0.3s ease;
+    margin-top: 5px;
 }
 
 /* Hover effect */
@@ -215,10 +227,10 @@ body {
 /* ==== SIGNUP PANEL (RIGHT) ==== */
 .signup-section {
     flex: 2;
-    padding: 60px 60px;
+    padding: 25px 30px;
     background: rgba(255, 255, 255, 0.12); 
     backdrop-filter: blur(10px);
-    border-radius: 0 15px 15px 0;
+    border-radius: 15px;
     box-shadow: 0 0 20px rgba(0,0,0,0.35);
     display: flex;
     flex-direction: column;
@@ -227,15 +239,15 @@ body {
     width: auto;            
     max-width: 100%;        
     box-sizing: border-box; 
-    overflow: hidden;  
+    overflow-y: auto;
 }
 
 .signup-section .section-title {
     display: flex;
     align-items: flex-end; 
-    font-size: 52px;       
+    font-size: 28px;       
     line-height: 1.15;
-    margin-bottom:5px;
+    margin-bottom: 8px;
     flex-wrap: nowrap;
     overflow: hidden;
     color: white;
@@ -243,38 +255,38 @@ body {
 
 /* spacing between words */
 .signup-section .section-title .word {
-    margin-right: 10px;      
-    font-size: 52px;         
+    margin-right: 6px;      
+    font-size: 28px;         
 }
 
 /* letters in EXP */
 .signup-section .section-title .letter {
-    margin-right: 10px;       
-    font-size: 52px;         
+    margin-right: 6px;       
+    font-size: 28px;         
 }
 
 /* X styling*/
 .signup-section .section-title .red-x {
     color: var(--exp-red-x);
-    font-size: 70px;         
+    font-size: 36px;         
     line-height: 1;
 }
 
 /* Sign up subtitle */
 .signup-section .subtitle {
-    font-size: 24px;
+    font-size: 12px;
     font-weight: 700;
     line-height: 100%;
-    margin-bottom: 40px;
+    margin-bottom: 15px;
     color: white;
 }
 
 /* sign up labels */
 .signup-section label {
-    font-size: 24px;
+    font-size: 12px;
     font-weight: 700;
     line-height: 100%;
-    margin-bottom: 10px;
+    margin-bottom: 6px;
     display: block;
     color: white;
 }
@@ -282,31 +294,31 @@ body {
 /* Sign up boxes */
 .signup-section .input-box {
     width: 100%;
-    max-width: 500px;
-    height: 57px;
-    font-size: 24px;
-    padding: 0 20px;
-    border-radius: 15px;
+    max-width: 350px;
+    height: 38px;
+    font-size: 14px;
+    padding: 0 12px;
+    border-radius: 10px;
     border: none;
     background: var(--muted-input);
-    margin-bottom: 40px;
+    margin-bottom: 15px;
     font-family: 'Orbitron', sans-serif;
 }
 
 .signup-btn {
-    width: 300px;
-    height: 74px;
-    font-size: 40px;
+    width: 160px;
+    height: 40px;
+    font-size: 18px;
     font-family: 'Orbitron', sans-serif;
     font-weight: 700;
-    border-radius: 15px;
+    border-radius: 10px;
     background: black;
     color: #DB0000;
     border: none;
     text-align: center;
     cursor: pointer;
-    margin-top: auto; 
-    align-self: flex-end;
+    margin-top: 5px; 
+    align-self: flex-start;
     transition: all 0.3s ease;
 }
 
@@ -315,5 +327,85 @@ body {
     background: #DB0000;  
     color: black;          
     transform: scale(1.05); 
+}
+
+/* ==== GAMES GRID (Games Index Page) ==== */
+.games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.games-grid .game-card {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.games-grid .game-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.games-grid .game-card img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    display: block;
+    background: #000;
+}
+
+/* Ensure console_icon images match game image sizes in games grid */
+.games-grid .game-card img[src*="console_icon"] {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    display: block;
+}
+
+.game-card-info {
+    padding: 1rem;
+}
+
+.game-card-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: white;
+}
+
+.game-card-price {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+}
+
+/* Ensure console_icon images match game image sizes in game detail page */
+.container img[src*="console_icon"] {
+    width: 300px;
+    height: 400px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+/* Ensure console_icon images match game image sizes in cart */
+.game-poster[src*="console_icon"] {
+    width: 243px;
+    height: 160px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+/* Ensure console_icon images match game image sizes in admin */
+table img[src*="console_icon"] {
+    width: 60px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 4px;
 }
 

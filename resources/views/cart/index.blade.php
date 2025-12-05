@@ -29,7 +29,12 @@
                 <div class="cart-item">
                     <div class="cart-item-panel">
                         <!-- Game Poster -->
-                        <img src="{{ $game->poster_url ?: ($game->image_url ?: asset('css/assets/game1.jpg')) }}" 
+                        @php
+                            $consoleIcon = asset('css/assets/console_icon.jpg');
+                            $gameImage = $game->poster_url ?: ($game->image_url ?: $consoleIcon);
+                        @endphp
+                        <img src="{{ $gameImage }}"
+                            onerror="this.onerror=null; this.src='{{ $consoleIcon }}';" 
                              alt="{{ $game->title }}" class="game-poster">
 
                         <!-- Game Details -->
@@ -61,7 +66,7 @@
                         
                         <!-- Price and Remove Button -->
                         <div class="price-controls">
-                            <p class="price">₱{{ number_format($item['price'], 0) }}</p>
+                            <p class="price">${{ number_format($item['price'], 0) }}</p>
                             
                             <div class="remove-controls">
                                 <a href="{{ route('cart.remove', $game->id) }}" style="text-decoration: none; color: white;">
@@ -83,14 +88,14 @@
         <div class="totals">
             <div class="subtotal-row">
                 <span>Subtotal:</span>
-                <span>₱{{ number_format($subtotal, 0) }}</span>
+                <span>${{ number_format($subtotal, 0) }}</span>
             </div>
 
             <div class="totals-divider"></div>
 
             <div class="total-row">
                 <span>Total (incl. VAT):</span>
-                <span>₱{{ number_format($total, 0) }}</span>
+                <span>${{ number_format($total, 0) }}</span>
             </div>
             <!-- VAT note under the total, left aligned -->
             <div class="vat-note">All prices include VAT where applicable</div>

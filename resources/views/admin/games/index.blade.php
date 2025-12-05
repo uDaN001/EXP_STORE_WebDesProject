@@ -29,20 +29,22 @@
                 <tr>
                     <td>{{ $game->id }}</td>
                     <td>
-                        @if($game->image_url)
-                            <img src="{{ $game->image_url }}" alt="{{ $game->title }}" style="width: 60px; height: 80px; object-fit: cover; border-radius: 4px;">
-                        @else
-                            <div style="width: 60px; height: 80px; background: #333; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.75rem;">No Image</div>
-                        @endif
+                        @php
+                            $consoleIcon = asset('css/assets/console_icon.jpg');
+                            $gameImage = !empty($game->image_url) ? $game->image_url : $consoleIcon;
+                        @endphp
+                        <img src="{{ $gameImage }}" alt="{{ $game->title }}" 
+                            style="width: 60px; height: 80px; object-fit: cover; border-radius: 4px;"
+                            onerror="this.onerror=null; this.src='{{ $consoleIcon }}';">
                     </td>
                     <td>{{ $game->title }}</td>
                     <td>
                         @if($game->is_on_sale && $game->sale_percentage)
-                            <div style="text-decoration: line-through; color: #999;">₱ {{ number_format($game->price, 2) }}</div>
-                            <div style="color: #ff6b6b; font-weight: 700;">₱ {{ number_format($game->sale_price, 2) }}</div>
+                            <div style="text-decoration: line-through; color: #999;">$ {{ number_format($game->price, 2) }}</div>
+                            <div style="color: #ff6b6b; font-weight: 700;">$ {{ number_format($game->sale_price, 2) }}</div>
                             <div style="font-size: 0.875rem; color: #ff6b6b;">{{ $game->sale_percentage }}% OFF</div>
                         @else
-                            <div>₱ {{ number_format($game->price, 2) }}</div>
+                            <div>$ {{ number_format($game->price, 2) }}</div>
                         @endif
                     </td>
                     <td>

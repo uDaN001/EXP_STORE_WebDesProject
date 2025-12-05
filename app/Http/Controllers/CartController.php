@@ -9,12 +9,24 @@ class CartController extends Controller
 {
     public function index()
     {
+        // Check if user is logged in
+        if (!session('customer_id')) {
+            return redirect()->route('customers.login')
+                ->with('error', 'Please login to view your cart.');
+        }
+
         $cart = session('cart', []);
         return view('cart.index', compact('cart'));
     }
 
     public function add($gameId)
     {
+        // Check if user is logged in
+        if (!session('customer_id')) {
+            return redirect()->route('customers.login')
+                ->with('error', 'Please login to add items to cart.');
+        }
+
         $game = Game::findOrFail($gameId);
         
         if ($game->stock <= 0) {
@@ -49,6 +61,12 @@ class CartController extends Controller
 
     public function remove($gameId)
     {
+        // Check if user is logged in
+        if (!session('customer_id')) {
+            return redirect()->route('customers.login')
+                ->with('error', 'Please login to manage your cart.');
+        }
+
         $cart = session('cart', []);
         
         foreach ($cart as $key => $item) {
@@ -72,6 +90,12 @@ class CartController extends Controller
 
     public function clear()
     {
+        // Check if user is logged in
+        if (!session('customer_id')) {
+            return redirect()->route('customers.login')
+                ->with('error', 'Please login to manage your cart.');
+        }
+
         session(['cart' => []]);
         return redirect()->route('cart.index')->with('success', 'Cart cleared.');
     }

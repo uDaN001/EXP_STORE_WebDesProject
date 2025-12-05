@@ -23,7 +23,7 @@
                     <tr>
                         <td>{{ $order->id }}</td>
                         <td>{{ $order->customer->full_name ?? $order->customer->username }}</td>
-                        <td>₱ {{ number_format($order->total_amount, 2) }}</td>
+                        <td>$ {{ number_format($order->total_amount, 2) }}</td>
                         <td>{{ $order->payment_method ?? 'N/A' }}</td>
                         <td>
                             <span style="padding: 0.25rem 0.5rem; border-radius: 4px; background: 
